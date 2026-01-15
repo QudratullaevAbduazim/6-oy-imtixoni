@@ -4,16 +4,20 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from .models import Account, Category, Transaction
 
-# 1. Dashboard - Hamma narsani hisoblab ko'rsatuvchi asosiy sahifa
-class DashboardView(LoginRequiredMixin, View):
+# 1. Dashboard - LoginRequiredMixin qaytarildi
+from django.views import View
+from django.db.models import Sum
+from .models import Account, Transaction
+
+class DashboardView(View):
     def get(self, request):
+        # Agar foydalanuvchi tizimga kirmagan bo'lsa, uni to'g'ri manzilga yuboramiz
+        if not request.user.is_authenticated:
+            return redirect('login') # Settingsdagi LOGIN_URL ni aylanib o'tamiz
+            
         user = request.user
         accounts = Account.objects.filter(user=user)
-        
-        # Jami balansni hisoblash (hamma hamyonlardagi pul yig'indisi)
         total_balance = accounts.aggregate(Sum('balance'))['balance__sum'] or 0
-        
-        # Oxirgi 10 ta tranzaksiyani olish
         transactions = Transaction.objects.filter(user=user).order_by('-date')[:10]
         
         context = {
@@ -21,9 +25,9 @@ class DashboardView(LoginRequiredMixin, View):
             'total_balance': total_balance,
             'transactions': transactions,
         }
-        return render(request, 'finance/dashboard.html', context)
+        return render(request, 'templates/dashboard.html', context)
 
-# 2. Hisob yaratish (Karta, Naqd pul va h.k.)
+# 2. Hisob yaratish
 class AccountCreateView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'finance/account_form.html')
@@ -39,10 +43,9 @@ class AccountCreateView(LoginRequiredMixin, View):
         )
         return redirect('dashboard')
 
-# 3. Tranzaksiya yaratish (Kirim-chiqim amali)
+# 3. Tranzaksiya yaratish
 class TransactionCreateView(LoginRequiredMixin, View):
     def get(self, request):
-        # HTML dagi <select> uchun userga tegishli account va kategorylarni yuboramiz
         accounts = Account.objects.filter(user=request.user)
         categories = Category.objects.filter(user=request.user)
         
@@ -55,14 +58,15 @@ class TransactionCreateView(LoginRequiredMixin, View):
     def post(self, request):
         account_id = request.POST.get('account')
         category_id = request.POST.get('category')
-        amount = float(request.POST.get('amount', 0))
+        amount_str = request.POST.get('amount', '0')
+        
+        # Bo'sh qiymat kelib qolsa xato bermasligi uchun
+        amount = float(amount_str) if amount_str else 0
         comment = request.POST.get('comment', '')
 
-        # Bazadan tegishli ob'ektlarni olamiz
         account = get_object_or_404(Account, id=account_id, user=request.user)
         category = get_object_or_404(Category, id=category_id, user=request.user)
 
-        # 1. Tranzaksiyani yaratish
         Transaction.objects.create(
             user=request.user,
             account=account,
@@ -71,12 +75,10 @@ class TransactionCreateView(LoginRequiredMixin, View):
             comment=comment
         )
 
-        # 2. MANTIQ: Account balansini yangilash
         if category.kind == 'out':
-            account.balance -= amount  # Chiqim bo'lsa ayiramiz
+            account.balance -= amount
         else:
-            account.balance += amount  # Kirim bo'lsa qo'shamiz
+            account.balance += amount
         
-        account.save() # Yangilangan balansni bazaga saqlaymiz
-        
+        account.save()
         return redirect('dashboard')

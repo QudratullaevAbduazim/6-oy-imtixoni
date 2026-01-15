@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Moliya Tizimi{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>👋 Xush kelibsiz, {{ user.username }}!</h2>
+        <p>Sizning moliya dashboardingiz</p>
+    </div>
+
+    <div style="padding: 1rem 0;">
+        {% if user.profile.profile_picture %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profil rasmi" class="profile-image-preview">
+        {% endif %}
+
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+            <h3 style="color: #333; margin-bottom: 1rem;">📊 Profil ma'lumotlari</h3>
+            <p style="margin: 0.5rem 0;"><strong>Foydalanuvchi:</strong> {{ user.username }}</p>
+            <p style="margin: 0.5rem 0;"><strong>Email:</strong> {{ user.email|default:"Kiritilmagan" }}</p>
+            {% if user.profile.phone_number %}
+                <p style="margin: 0.5rem 0;"><strong>Telefon:</strong> {{ user.profile.phone_number }}</p>
+            {% endif %}
+            {% if user.profile.birth_date %}
+                <p style="margin: 0.5rem 0;"><strong>Tug'ilgan kun:</strong> {{ user.profile.birth_date }}</p>
+            {% endif %}
+            {% if user.profile.bio %}
+                <p style="margin: 0.5rem 0;"><strong>Bio:</strong> {{ user.profile.bio }}</p>
+            {% endif %}
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 8px; color: white; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">💳 Jami hisob</h4>
+                <p style="font-size: 1.5rem; font-weight: bold;">0 so'm</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 1.5rem; border-radius: 8px; color: white; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">📈 Daromad</h4>
+                <p style="font-size: 1.5rem; font-weight: bold;">0 so'm</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 1.5rem; border-radius: 8px; color: white; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">📉 Xarajat</h4>
+                <p style="font-size: 1.5rem; font-weight: bold;">0 so'm</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="{% url 'profile_update' %}" class="btn btn-primary">Profilni tahrirlash</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
