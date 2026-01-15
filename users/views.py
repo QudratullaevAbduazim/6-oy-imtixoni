@@ -46,7 +46,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
 
     def post(self, request):
         profile = request.user.profile
-        form = ProfileUpdateForm(request.POST, instance=profile)
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=profile) 
         if form.is_valid():
             form.save()
             return redirect('dashboard')

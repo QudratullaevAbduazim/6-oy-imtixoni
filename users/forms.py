@@ -4,4 +4,4 @@ from .models import Profile
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['language', 'phone_number']
+        fields = ['language', 'phone_number','avatar']

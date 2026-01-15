@@ -12,6 +12,6 @@ class Profile(models.Model):
     ]
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='uz')
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg')
     def __str__(self):
         return f"{self.user.username} profili"
