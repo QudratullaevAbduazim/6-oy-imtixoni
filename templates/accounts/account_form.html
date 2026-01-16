@@ -1,0 +1,140 @@
+{% load i18n %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3" style="width: 80px; height: 80px;">
+                    <i class="{% if object %}fas fa-edit{% else %}fas fa-wallet{% endif %} fa-2x text-primary"></i>
+                </div>
+                <h2 class="fw-bold mb-2">
+                    {% if object %}
+                        {% trans "Hisobni tahrirlash" %}
+                    {% else %}
+                        {% trans "Yangi hisob yaratish" %}
+                    {% endif %}
+                </h2>
+                <p class="text-muted">{% trans "Moliyaviy hisobingiz ma'lumotlarini kiriting" %}</p>
+            </div>
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" id="accountForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="accountName" class="form-label fw-semibold mb-2">
+                                <i class="fas fa-tag text-primary me-2"></i>{% trans "Hamyon nomi" %}
+                            </label>
+                            <input 
+                                type="text" 
+                                name="name" 
+                                id="accountName"
+                                class="form-control form-control-lg border-2" 
+                                placeholder="{% trans 'Masalan: Asosiy karta, Naqd pul, Jamg\'arma' %}" 
+                                value="{% if object %}{{ object.name }}{% endif %}" 
+                                required
+                                autocomplete="off">
+                            <small class="form-text text-muted mt-1 d-block">
+                                <i class="fas fa-info-circle me-1"></i>{% trans "Hisobingizni oson aniqlash uchun tushunarli nom bering" %}
+                            </small>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="accountType" class="form-label fw-semibold mb-2">
+                                    <i class="fas fa-credit-card text-primary me-2"></i>{% trans "Hisob turi" %}
+                                </label>
+                                <select name="account_type" id="accountType" class="form-select form-select-lg border-2">
+                                    <option value="CARD" {% if object.account_type == 'CARD' %}selected{% endif %}>
+                                        💳 {% trans "Bank kartasi" %}
+                                    </option>
+                                    <option value="CASH" {% if object.account_type == 'CASH' %}selected{% endif %}>
+                                        💵 {% trans "Naqd pul" %}
+                                    </option>
+                                    <option value="OTHER" {% if object.account_type == 'OTHER' %}selected{% endif %}>
+                                        🏦 {% trans "Boshqa" %}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="currency" class="form-label fw-semibold mb-2">
+                                    <i class="fas fa-dollar-sign text-primary me-2"></i>{% trans "Valyuta" %}
+                                </label>
+                                <select name="currency" id="currency" class="form-select form-select-lg border-2">
+                                    <option value="UZS" {% if object.currency == 'UZS' %}selected{% endif %}>
+                                        🇺🇿 UZS - {% trans "O'zbek so'mi" %}
+                                    </option>
+                                    <option value="USD" {% if object.currency == 'USD' %}selected{% endif %}>
+                                        🇺🇸 USD - {% trans "AQSH dollari" %}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="balance" class="form-label fw-semibold mb-2">
+                                <i class="fas fa-money-bill-wave text-primary me-2"></i>
+                                {% if object %}{% trans "Joriy balans" %}{% else %}{% trans "Boshlang'ich balans" %}{% endif %}
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-2">
+                                    <i class="fas fa-coins text-warning"></i>
+                                </span>
+                                <input 
+                                    type="number" 
+                                    name="balance" 
+                                    id="balance"
+                                    step="0.01" 
+                                    class="form-control border-2" 
+                                    placeholder="0.00"
+                                    value="{% if object %}{{ object.balance|stringformat:'.2f' }}{% else %}0{% endif %}" 
+                                    required>
+                                <span class="input-group-text bg-light border-2 text-muted" id="currencySymbol">
+                                    {{ object.currency|default:"UZS" }}
+                                </span>
+                            </div>
+                            <small class="form-text text-muted mt-1 d-block">
+                                <i class="fas fa-lightbulb me-1"></i>{% trans "Hozirgi hisobingizdagi miqdorni kiriting" %}
+                            </small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 shadow-sm">
+                                <i class="fas fa-check-circle me-2"></i>
+                                {% if object %}{% trans "Yangilash" %}{% else %}{% trans "Yaratish" %}{% endif %}
+                            </button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg rounded-3">
+                                <i class="fas fa-times-circle me-2"></i>{% trans "Bekor qilish" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light border-0 p-3">
+                    <div class="d-flex align-items-center justify-content-center text-muted small">
+                        <i class="fas fa-shield-alt me-2 text-success"></i>
+                        <span>{% trans "Ma'lumotlaringiz xavfsiz saqlanadi" %}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-question-circle me-1"></i>
+                    {% trans "Yordam kerakmi?" %} <a href="#" class="text-decoration-none">{% trans "Qo'llanmani o'qing" %}</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ... (Sizdagi barcha stillar o'zgarishsiz qoladi) ... */
+</style>
+{% endblock %}

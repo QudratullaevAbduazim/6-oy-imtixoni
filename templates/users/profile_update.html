@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-lg p-4 border-0">
+            <h3 class="fw-bold mb-4 text-center text-primary">Profilni tahrirlash</h3>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="text-center mb-4">
+                    <img src="{{ user.profile.avatar.url }}" class="rounded-circle border mb-3 shadow-sm" width="120" height="120" style="object-fit: cover;">
+                    <input type="file" name="avatar" class="form-control form-control-sm">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Asosiy til</label>
+                    <select name="language" class="form-select">
+                        <option value="uz" {% if user.profile.language == 'uz' %}selected{% endif %}>O'zbekcha</option>
+                        <option value="ru" {% if user.profile.language == 'ru' %}selected{% endif %}>Русский</option>
+                        <option value="en" {% if user.profile.language == 'en' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Afzal ko'rilgan valyuta</label>
+                    <select name="preferred_currency" class="form-select">
+                        <option value="UZS" {% if user.profile.preferred_currency == 'UZS' %}selected{% endif %}>UZS (So'm)</option>
+                        <option value="USD" {% if user.profile.preferred_currency == 'USD' %}selected{% endif %}>USD (Dollar)</option>
+                    </select>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-round py-2 shadow">O'zgarishlarni saqlash</button>
+                    <a href="{% url 'profile_view' %}" class="btn btn-light btn-round">Bekor qilish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-tags me-2"></i>Yangi kategoriya</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Kategoriya nomi</label>
+                        <input type="text" name="name" class="form-control" placeholder="Masalan: Ovqat, Maosh, Transport" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Tranzaksiya turi</label>
+                        <select name="kind" class="form-select">
+                            <option value="in">Kirim (Income)</option>
+                            <option value="out" selected>Chiqim (Expense)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">Ikonka (FontAwesome)</label>
+                        <select name="icon" class="form-select">
+                            <option value="utensils">Ovqat (Utensils)</option>
+                            <option value="car">Transport (Car)</option>
+                            <option value="shopping-cart">Bozorlik (Shopping)</option>
+                            <option value="money-bill-alt">Ish haqi (Money)</option>
+                            <option value="heart">Sog'liq (Heart)</option>
+                            <option value="graduation-cap">O'qish (Education)</option>
+                            <option value="home">Uy/Ijara (Home)</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-dark btn-round py-2">Kategoriyani saqlash</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-light btn-round text-muted">Orqaga</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

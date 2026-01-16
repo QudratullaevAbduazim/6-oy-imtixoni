@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-5 bg-light" style="min-height: 100vh;">
+    <div class="container">
+        
+        <div class="row mb-5 align-items-center animate-fadeIn">
+            <div class="col-md-7">
+                <h1 class="fw-bold text-dark mb-1">Mening Hisoblarim</h1>
+                <p class="text-muted">Barcha faol hisoblaringiz va ulardagi joriy mablag'lar</p>
+            </div>
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="d-flex">
+                            <div class="bg-primary p-4 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-vault fa-2x text-white"></i>
+                            </div>
+                            <div class="p-3 flex-grow-1">
+                                <small class="text-uppercase fw-bold text-muted small">Umumiy mablag' (UZS)</small>
+                                <h3 class="fw-bold mb-0 text-primary">{{ total_balance_uzs|floatformat:0 }} UZS</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for account in accounts %}
+            <div class="col-md-6 col-lg-4 animate-slideUp">
+                <div class="card border-0 shadow-sm rounded-4 h-100 account-card position-relative">
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge {% if account.account_type == 'CARD' %}bg-info{% else %}bg-success{% endif %} bg-opacity-10 text-dark border-0 px-3">
+                            {{ account.get_account_type_display }}
+                        </span>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="icon-circle shadow-sm">
+                                {% if account.account_type == 'CARD' %}
+                                    <i class="fas fa-credit-card text-info"></i>
+                                {% elif account.account_type == 'CASH' %}
+                                    <i class="fas fa-money-bill-wave text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-landmark text-primary"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">{{ account.name }}</h5>
+                                <small class="text-muted">{{ account.currency }}</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-light p-3 rounded-3 mb-4">
+                            <small class="text-muted d-block mb-1">Joriy qoldiq</small>
+                            <h3 class="fw-bold mb-0">
+                                {{ account.balance|floatformat:0 }} 
+                                <span class="fs-6 fw-normal">{{ account.currency }}</span>
+                            </h3>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'account_update' account.pk %}" class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill">
+                                <i class="fas fa-edit me-1"></i> Tahrirlash
+                            </a>
+                            <button class="btn btn-light btn-sm rounded-circle shadow-sm">
+                                <i class="fas fa-history"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="opacity-25 mb-3">
+                    <i class="fas fa-wallet fa-5x"></i>
+                </div>
+                <h4 class="text-muted">Hisoblar topilmadi</h4>
+                <p class="text-muted mb-4">Hali birorta ham hisob qo'shmaganga o'xshaysiz.</p>
+                <a href="{% url 'account_create' %}" class="btn btn-primary px-4 rounded-pill">
+                    <i class="fas fa-plus me-2"></i>Birinchi hisobni qo'shish
+                </a>
+            </div>
+            {% endfor %}
+
+            {% if accounts %}
+            <div class="col-md-6 col-lg-4 animate-slideUp">
+                <a href="{% url 'account_create' %}" class="text-decoration-none h-100">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 border-dashed d-flex align-items-center justify-content-center p-5">
+                        <div class="text-center">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle mb-3 d-inline-block">
+                                <i class="fas fa-plus fa-2x text-primary"></i>
+                            </div>
+                            <h6 class="fw-bold text-primary">Yangi hisob qo'shish</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Maxsus dizayn elementlari */
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .account-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+    .account-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important;
+        border-color: #4e54c8 !important;
+    }
+
+    .border-dashed {
+        border: 2px dashed #cbd5e0 !important;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+
+    .border-dashed:hover {
+        background: rgba(78, 84, 200, 0.03);
+        border-color: #4e54c8 !important;
+    }
+
+    /* Animatsiyalar */
+    .animate-fadeIn { animation: fadeIn 0.8s ease; }
+    .animate-slideUp { animation: slideUp 0.6s ease; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

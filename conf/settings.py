@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,12 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    'finance',
+    'accounts',
+    'transactions',
+    'reports',
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',           # <--- MANA SHU QATOR BORLIGINI TEKSHIRING
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -124,6 +129,34 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # settings.py ning eng oxiriga qo'shing (Avvalgilarini o'chirib tashlang)
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+
+
+# Til va internationalization
+LANGUAGE_CODE = 'uz'  # default
+LANGUAGES = [
+    ('uz', 'Uzbek'),
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
+
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+TIME_ZONE = 'Asia/Tashkent'
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale/',
+]
+
+
+# settings.py
+
+# Foydalanuvchi tizimga kirmagan bo'lsa, qayerga yuborishni ko'rsatadi
+LOGIN_URL = 'login' 
+
+# Muvaffaqiyatli kirgandan keyin qayerga o'tishni belgilaydi
+LOGIN_REDIRECT_URL = 'dashboard'
+
+# Tizimdan chiqqanda qayerga yuborish
+LOGOUT_REDIRECT_URL = 'login'

@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-7 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-4 animate-slideUp">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 d-inline-block p-3 rounded-circle mb-3">
+                        <i class="fas fa-user-plus fa-2x text-primary"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Ro'yxatdan o'tish</h2>
+                    <p class="text-muted small">Moliya boshqaruvini biz bilan boshlang</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-secondary">
+                            {% if field.name == 'avatar' %}<i class="fas fa-image me-1"></i>{% endif %}
+                            {{ field.label }}
+                        </label>
+                        
+                        {{ field }}
+                        
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                            <div class="form-text small text-muted">{{ field.help_text|safe }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm py-2 fs-6 fw-bold">
+                            Tizimga qo'shilish
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4 text-muted opacity-25">
+
+                <div class="text-center">
+                    <p class="text-muted small mb-0">Profilingiz bormi? 
+                        <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Kirish</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'dashboard' %}" class="text-muted small text-decoration-none opacity-75">
+                <i class="fas fa-arrow-left me-1"></i> Bosh sahifaga qaytish
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Inputlarni chiroyli qilish */
+    form input:not([type="checkbox"]):not([type="file"]), 
+    form select, 
+    form textarea {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1.2rem;
+        font-size: 0.95rem;
+        color: #333;
+        background-color: #f9f9fb;
+        border: 1.5px solid #ececf3;
+        border-radius: 12px !important; /* Bir oz burchakliroq zamonaviy uslub */
+        transition: all 0.2s ease-in-out;
+    }
+
+    form input:focus {
+        background-color: #fff;
+        border-color: #4e54c8;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(78, 84, 200, 0.15);
+    }
+
+    /* Rasm yuklash inputini chiroyli qilish */
+    form input[type="file"] {
+        padding: 10px;
+        background: #f8f9fa;
+        border: 1px dashed #ced4da;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .animate-slideUp {
+        animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4e54c8, #667eea);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #3f44a3, #4e54c8);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(78, 84, 200, 0.2);
+    }
+</style>
+{% endblock %}
