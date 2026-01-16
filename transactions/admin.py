@@ -19,26 +19,20 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    # Admin panelda ko‘rinadigan ustunlar
     list_display = (
         'id', 'user', 'account', 'category', 
         'amount', 'currency', 'exchange_rate', 
         'is_transfer', 'to_account', 'date'
     )
     
-    # Qidirish uchun maydonlar
     search_fields = ('account__name', 'category__name', 'user__username', 'comment')
     
-    # Filtrlash uchun maydonlar
     list_filter = ('currency', 'is_transfer', 'date', 'category')
     
-    # Tartiblash
     ordering = ('-date',)
     
-    # readonly_fields → faqat ko‘rish uchun
     readonly_fields = ('date',)
     
-    # Sahifada yozuvlar soni
     list_per_page = 25
 
     def amount_with_currency(self, obj):

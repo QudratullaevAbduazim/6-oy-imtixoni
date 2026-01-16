@@ -16,7 +16,6 @@ class ReportsView(LoginRequiredMixin, View):
 
         queryset = Transaction.objects.filter(user=request.user)
 
-        # 1. Filtrlash mantiqi
         if start_date and end_date:
             queryset = queryset.filter(date__date__range=[start_date, end_date])
             period = 'custom'
@@ -28,10 +27,9 @@ class ReportsView(LoginRequiredMixin, View):
                 queryset = queryset.filter(date__date=now.date())
             elif period == 'week':
                 queryset = queryset.filter(date__gte=now - timedelta(days=7))
-            else:  # month
+            else:  
                 queryset = queryset.filter(date__gte=now - timedelta(days=30))
 
-        # 2. Statistika (Decimal va Mixed Types xatosi tuzatilgan)
         stats = queryset.aggregate(
             total_income=Sum(
                 Case(
@@ -52,14 +50,12 @@ class ReportsView(LoginRequiredMixin, View):
         income = stats['total_income'] or Decimal('0')
         expense = stats['total_expense'] or Decimal('0')
 
-        # 3. Grafik uchun ma'lumotlar (Faqat xarajatlar)
         category_data = queryset.filter(category__kind='out').values(
             'category__name'
         ).annotate(
             total=Sum('amount_in_uzs')
         ).order_by('-total')
 
-        # Tilni aniqlash
         current_lang = request.session.get('_language', 'uz')
 
         context = {

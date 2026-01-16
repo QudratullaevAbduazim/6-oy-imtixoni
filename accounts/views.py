@@ -4,12 +4,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 from django.utils import timezone
-from decimal import Decimal, ROUND_DOWN  # ROUND_DOWN bu yerda shart
+from decimal import Decimal, ROUND_DOWN 
 
 from .models import Account
 from transactions.models import Transaction, Category
 
-# KURSNI SHU YERDA ANIQLAB OLAMIZ
 USD_TO_UZS = Decimal('12800')
 
 class DashboardView(LoginRequiredMixin, View):
@@ -21,17 +20,14 @@ class DashboardView(LoginRequiredMixin, View):
         total_income = Decimal('0')
         total_expense = Decimal('0')
 
-        # 1. Hamyonlar balansini hisoblash
         for acc in accounts:
             if acc.currency == 'USD':
                 total_balance_uzs += (acc.balance * USD_TO_UZS)
             else:
                 total_balance_uzs += acc.balance
 
-        # 2. Kirim va Chiqimni hisoblash
         all_stats = Transaction.objects.filter(user=request.user, is_transfer=False)
         for t in all_stats:
-            # Dollarni so'mga o'girib hisoblash
             val = t.amount * USD_TO_UZS if t.currency == 'USD' else t.amount
             
             if t.category and t.category.kind == 'in':
@@ -39,7 +35,6 @@ class DashboardView(LoginRequiredMixin, View):
             elif t.category and t.category.kind == 'out':
                 total_expense += val
 
-        # 3. USD ekvivalentini hisoblash
         total_balance_usd = (total_balance_uzs / USD_TO_UZS).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
 
         context = {
@@ -52,7 +47,6 @@ class DashboardView(LoginRequiredMixin, View):
         }
         return render(request, 'accounts/dashboard.html', context)
 
-# Account amallari
 class AccountCreateView(LoginRequiredMixin, CreateView):
     model = Account
     fields = ['name', 'account_type', 'balance', 'currency']
@@ -76,11 +70,9 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
 
 class AccountListView(LoginRequiredMixin, View):
     def get(self, request):
-        # Foydalanuvchiga tegishli hisoblarni olish
         accounts = Account.objects.filter(user=request.user)
         
-        # Umumiy balansni hisoblash (UZS da)
-        # Barcha qatorlar funksiya ichida (o'ngroqda) bo'lishi shart
+        
         total_balance_uzs = sum(
             acc.balance if acc.currency == 'UZS' else acc.balance * Decimal('12800') 
             for acc in accounts
